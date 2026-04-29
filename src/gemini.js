@@ -16,15 +16,17 @@ export const generateResponse = async (personaPrompt, messages) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.5-flash',
       systemInstruction: personaPrompt
     });
 
-    // Convert messages to Gemini history format
-    const history = messages.filter(m => m.role !== 'system').map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.content }]
-    }));
+    // Convert messages to Gemini history format, skipping the initial greeting
+    const history = messages
+      .filter(m => m.role !== 'system' && m.id !== 'welcome')
+      .map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }]
+      }));
 
     const chat = model.startChat({
       history: history.slice(0, -1), // All except the latest message
@@ -37,6 +39,6 @@ export const generateResponse = async (personaPrompt, messages) => {
     return responseText;
   } catch (error) {
     console.error("Error calling Gemini API:", error);
-    throw new Error("Failed to get response from the AI. Please try again.");
+    throw new Error(error.message || "Failed to get response from the AI. Please try again.");
   }
 };

@@ -162,7 +162,9 @@ function App() {
                   {msg.role === 'user' ? (
                     <p>{msg.content}</p>
                   ) : (
-                    <ReactMarkdown className="markdown-content">{msg.content}</ReactMarkdown>
+                    <div className="markdown-content">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
                   )}
                 </div>
 
